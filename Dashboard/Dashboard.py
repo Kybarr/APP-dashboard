@@ -1,7 +1,9 @@
+pip install plotly
 import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
+import plotly.express as px
 
 img = Image.open('Dashboard/sepeda-gunung.jpg')
 st.sidebar.image(img)
@@ -74,17 +76,17 @@ change_percentage = ((total_penyewaan_filtered - previous_total_penyewaan) / pre
 
 if halaman == "📅 Analisis Harian":
     st.subheader("📅 Analisis Penyewaan Sepeda Harian")
-    fig = line(day_df_filtered, x="dteday", y="cnt", title="📈 Tren Penyewaan Sepeda Harian")
+    fig = px.line(day_df_filtered, x="dteday", y="cnt", title="📈 Tren Penyewaan Sepeda Harian")
     st.plotly_chart(fig)
 
 elif halaman == "⏰ Analisis Jam":
     st.subheader("⏰ Distribusi Penyewaan Sepeda Per Jam")
-    fig = box(hour_df_filtered, x="hr", y="cnt", title="📊 Distribusi Penyewaan Sepeda Setiap Jam")
+    fig = px.box(hour_df_filtered, x="hr", y="cnt", title="📊 Distribusi Penyewaan Sepeda Setiap Jam")
     st.plotly_chart(fig)
 
 elif halaman == "☁️ Statistik Cuaca":
     st.subheader("☁️ Pengaruh Cuaca terhadap Penyewaan Sepeda")
-    fig = bar(
+    fig = px.bar(
     day_df_filtered, 
     x="weathersit", 
     y="cnt", 
