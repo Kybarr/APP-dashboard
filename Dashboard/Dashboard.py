@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image
+import plotly.express as px
 
 img = Image.open('Dashboard/sepeda-gunung.jpg')
 st.sidebar.image(img)
