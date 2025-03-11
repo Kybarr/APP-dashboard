@@ -11,19 +11,10 @@ st.sidebar.image(img)
 day_df = pd.read_csv("Dashboard/day.csv")
 hour_df = pd.read_csv("Dashboard/hour.csv")
 
-# Konversi kolom tanggal ke format datetime
-day_df["dteday"] = pd.to_datetime(day_df["dteday"])
-hour_df["dteday"] = pd.to_datetime(hour_df["dteday"])
-
-day_df["temp_C"] = day_df["temp"] * 41
-day_df["atemp_C"] = day_df["atemp"] * 50
-day_df["humidity_percent"] = day_df["hum"] * 100
-day_df["windspeed_kmh"] = day_df["windspeed"] * 67
-
 # Sidebar Navigasi
 st.sidebar.title("🚴‍♂️ Navigasi Dashboard")
 halaman = st.sidebar.radio("🔍 Pilih Halaman:",
-    ["🏠 Beranda", "📅 Analisis Harian", "⏰ Analisis Jam", "☁️ Statistik Cuaca", "📊 Analisis Lanjutan"])
+    ["🏠 Beranda", "📅 Analisis Harian", "⏰ Analisis Jam", "❓ Pertanyaan Analisis"])
 
 # Beranda dengan Tampilan Lebih Menarik
 st.title("📊 Dashboard Penyewaan Sepeda")
@@ -31,108 +22,69 @@ st.markdown("""
     🚲 **Selamat datang di Dashboard Penyewaan Sepeda!** 🚲
     
     Dashboard ini menyediakan berbagai analisis berdasarkan data penyewaan sepeda.
+    - **Analisis Harian:** Melihat tren penyewaan harian.
+    - **Analisis Jam:** Menganalisis pola penyewaan berdasarkan jam.
+    - **Pertanyaan Analisis:** Menjawab pertanyaan penting terkait pola penyewaan.
     
     **Pilih menu di navigasi sidebar untuk melihat lebih banyak informasi!** 🚴‍♂️
 """)
 
 # Menampilkan Statistik Utama
 total_penyewa = day_df["cnt"].sum()
-
 col1, col2, col3 = st.columns(3)
 col1.metric("📦 Total Penyewa", f"{total_penyewa:,}")
 
-# Filter Data berdasarkan Rentang Tanggal
-st.sidebar.subheader("📆 Filter Data")
-min_date, max_date = st.sidebar.date_input(
-    "Pilih Rentang Tanggal", [day_df["dteday"].min(), day_df["dteday"].max()],
-    min_value=day_df["dteday"].min(),
-    max_value=day_df["dteday"].max()
-)
-
-day_df_filtered = day_df[(day_df["dteday"] >= pd.Timestamp(min_date)) & (day_df["dteday"] <= pd.Timestamp(max_date))]
-hour_df_filtered = hour_df[(hour_df["dteday"] >= pd.Timestamp(min_date)) & (hour_df["dteday"] <= pd.Timestamp(max_date))]
-
-# Menampilkan Penjelasan Otomatis Berdasarkan Tanggal
-st.sidebar.markdown("### ℹ️ Informasi Data yang Dipilih")
-st.sidebar.write(f"Data tersedia dari **{day_df['dteday'].min().strftime('%Y-%m-%d')}** hingga **{day_df['dteday'].max().strftime('%Y-%m-%d')}**")
-st.sidebar.write(f"Anda memilih rentang tanggal dari **{min_date}** hingga **{max_date}**")
-
-jumlah_hari = (pd.Timestamp(max_date) - pd.Timestamp(min_date)).days + 1
-total_penyewaan_filtered = day_df_filtered['cnt'].sum()
-rata_rata_penyewaan = total_penyewaan_filtered / jumlah_hari if jumlah_hari > 0 else 0
-
-st.sidebar.write(f"Jumlah hari dalam rentang ini: **{jumlah_hari}** hari")
-st.sidebar.write(f"Total penyewaan dalam rentang ini: **{total_penyewaan_filtered:,}** sepeda")
-st.sidebar.write(f"Rata-rata penyewaan per hari: **{rata_rata_penyewaan:,.2f}** sepeda/hari")
-
-# Perbandingan dengan Periode Sebelumnya
-previous_period_end = pd.Timestamp(min_date) - pd.Timedelta(days=1)
-previous_period_start = previous_period_end - pd.Timedelta(days=jumlah_hari - 1)
-previous_df = day_df[(day_df["dteday"] >= previous_period_start) & (day_df["dteday"] <= previous_period_end)]
-previous_total_penyewaan = previous_df['cnt'].sum()
-change_percentage = ((total_penyewaan_filtered - previous_total_penyewaan) / previous_total_penyewaan * 100) if previous_total_penyewaan > 0 else 0
-
-
 if halaman == "📅 Analisis Harian":
     st.subheader("📅 Analisis Penyewaan Sepeda Harian")
-    fig = px.line(day_df_filtered, x="dteday", y="cnt", title="📈 Tren Penyewaan Sepeda Harian")
-    st.plotly_chart(fig)
+    st.markdown("""
+    Berikut adalah data penyewaan sepeda per hari.
+    Data ini mencakup jumlah sepeda yang disewa dalam berbagai kondisi cuaca dan faktor lainnya.
+    """)
+    st.dataframe(day_df)
 
 elif halaman == "⏰ Analisis Jam":
     st.subheader("⏰ Distribusi Penyewaan Sepeda Per Jam")
-    fig = px.box(hour_df_filtered, x="hr", y="cnt", title="📊 Distribusi Penyewaan Sepeda Setiap Jam")
-    st.plotly_chart(fig)
+    st.markdown("""
+    Berikut adalah data penyewaan sepeda berdasarkan jam dalam sehari.
+    Data ini membantu memahami kapan puncak penyewaan terjadi.
+    """)
+    st.dataframe(hour_df)   
 
-elif halaman == "☁️ Statistik Cuaca":
-    st.subheader("☁️ Pengaruh Cuaca terhadap Penyewaan Sepeda")
-    fig = px.bar(
-    day_df_filtered, 
-    x="weathersit", 
-    y="cnt", 
-    title="🌦️ Pengaruh Kondisi Cuaca terhadap Penyewaan", 
-    color="cnt", 
-    color_continuous_scale="blues"  # Menggunakan skema warna biru
-)
-
-    st.plotly_chart(fig)
-    st.markdown(
-        """
-        **Keterangan Kondisi Cuaca:**
-        - 1️⃣ Cerah/Berawan sedikit
-        - 2️⃣ Kabut + Berawan
-        - 3️⃣ Hujan ringan/Snow ringan
-        - 4️⃣ Hujan deras/Snow deras
-        """)
-
-    st.subheader(" Informasi lebih lanjut")
-    st.write("**Rata-rata Suhu:**", f"{day_df['temp_C'].mean():.2f}°C")
-    st.write("**Rata-rata Suhu yang Dirasakan:**", f"{day_df['atemp_C'].mean():.2f}°C")
-    st.write("**Rata-rata Kelembaban:**", f"{day_df['humidity_percent'].mean():.2f}%")
-    st.write("**Rata-rata Kecepatan Angin:**", f"{day_df['windspeed_kmh'].mean():.2f} km/h")
-
-elif halaman == "📊 Analisis Lanjutan":
-    st.subheader("🔍 Analisis Lanjutan")
-    day_df['dteday'] = pd.to_datetime(day_df['dteday'])
-
-    latest_date = day_df['dteday'].max()
-    rfm = day_df.groupby('dteday').agg({'cnt': 'sum', 'casual': 'sum', 'registered': 'sum'}).reset_index()
-    rfm['Recency'] = (latest_date - rfm['dteday']).dt.days
-    rfm['Frequency'] = 1
-    rfm['Monetary'] = rfm['cnt']
-
-    st.subheader("RFM Analysis")
-    st.dataframe(rfm.head())
-
-    def categorize_customer(monetary):
-        if monetary < 500:
-            return 'Low Usage'
-        elif monetary <= 1500:
-            return 'Regular User'
-        else:
-            return 'High Usage'
-
-    rfm['Customer Category'] = rfm['Monetary'].apply(categorize_customer)
-    customer_category_counts = rfm['Customer Category'].value_counts()
+elif halaman == "❓ Pertanyaan Analisis":
+    st.subheader("❓ Analisis Berdasarkan Pertanyaan")
+    
+    st.markdown("### 1️⃣ Bagaimana pengaruh kondisi cuaca terhadap jumlah penyewaan sepeda?")
+    plt.figure(figsize=(8, 5))
+    sns.boxplot(x='weathersit', y='cnt', data=day_df, palette='coolwarm')
+    plt.title("Pengaruh Kondisi Cuaca terhadap Jumlah Penyewaan Sepeda", fontsize=14)
+    plt.xlabel("Kondisi Cuaca (1=Clear, 2=Cloudy, 3=Light Rain/Snow, 4=Heavy Rain/Snow)")
+    plt.ylabel("Jumlah Penyewaan Sepeda")
+    st.pyplot(plt)
+    st.markdown("""
+    Diagram berikut menunjukkan bagaimana kondisi cuaca mempengaruhi jumlah penyewaan sepeda.
+    
+    - **Kondisi 1**: Cerah/Berawan sedikit
+    - **Kondisi 2**: Kabut + Berawan
+    - **Kondisi 3**: Hujan ringan/Snow ringan
+    - **Kondisi 4**: Hujan deras/Snow deras
+    """)
+    
+    st.markdown("### 2️⃣ Bagaimana pola penyewaan sepeda berubah sepanjang hari, dan pada jam berapa penyewaan mencapai puncaknya?")
+    hourly_avg_rentals = hour_df.groupby('hr')['cnt'].mean().reset_index()
+    plt.figure(figsize=(10, 5))
+    sns.lineplot(x='hr', y='cnt', data=hourly_avg_rentals, marker='o', color='b')
+    plt.title("Pola Penyewaan Sepeda Sepanjang Hari", fontsize=14)
+    plt.xlabel("Jam dalam Sehari", fontsize=12)
+    plt.ylabel("Rata-rata Jumlah Penyewaan", fontsize=12)
+    plt.xticks(range(0, 24))
+    plt.grid(True)
+    st.pyplot(plt)
+    st.markdown("""
+    Diagram berikut menunjukkan pola rata-rata penyewaan sepeda sepanjang hari.
+    
+    - Penyewaan sepeda cenderung meningkat pada jam sibuk (pagi dan sore hari).
+    - Menurun pada tengah malam hingga pagi dini hari.
+    """)
     
     st.subheader("Clustering Result")
     st.dataframe(customer_category_counts)
