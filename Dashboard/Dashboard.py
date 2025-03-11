@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 import plotly.express as px
+import matplotlib.pyplot as plt
+
 
 img = Image.open('Dashboard/sepeda-gunung.jpg')
 st.sidebar.image(img)
@@ -85,9 +87,6 @@ elif halaman == "❓ Pertanyaan Analisis":
     - Penyewaan sepeda cenderung meningkat pada jam sibuk (pagi dan sore hari).
     - Menurun pada tengah malam hingga pagi dini hari.
     """)
-    
-    st.subheader("Clustering Result")
-    st.dataframe(customer_category_counts)
 
 st.sidebar.markdown("Data Diri :")
 st.sidebar.info("Rizky Akbar")
