@@ -28,29 +28,26 @@ jika ingin dijalankan di lokal vscode maka tidak perlu menggunakan 'Dashboard/'
 📖 Navigasi Dashboard
 Dashboard memiliki beberapa halaman utama yang dapat diakses melalui sidebar:
 
-1. 🏠 Beranda  
-   Menampilkan ringkasan dan total penyewa sepeda.
+## 🏗️ Fitur Utama
+1. **🏠 Beranda**
+   - Menyediakan pengenalan tentang dashboard dan navigasi.
+   - Memberikan gambaran umum tentang isi dashboard.
 
-2. 📅 Analisis Harian  
-   Menampilkan tren penyewaan sepeda berdasarkan data harian dalam bentuk grafik garis.
+2. **📅 Analisis Harian**
+   - Menampilkan tabel data penyewaan sepeda per hari.
+   - Memberikan informasi tren harian berdasarkan dataset.
 
-3. ⏰ Analisis Jam  
-   Menampilkan distribusi penyewaan sepeda berdasarkan jam dalam bentuk boxplot.
+3. **⏰ Analisis Jam**
+   - Menampilkan tabel data penyewaan sepeda berdasarkan jam.
+   - Memberikan wawasan mengenai pola penyewaan sepanjang hari.
 
-4. ☁️ Statistik Cuaca  
-   Menunjukkan pengaruh cuaca terhadap jumlah penyewaan sepeda.
+4. **❓ Pertanyaan Analisis**
+   - **Pengaruh kondisi cuaca terhadap penyewaan sepeda**
+     - Menggunakan diagram boxplot untuk menunjukkan hubungan antara cuaca dan jumlah penyewaan sepeda.
+     - Menjelaskan bagaimana kondisi cuaca (cerah, hujan, berkabut) memengaruhi jumlah penyewa.
+   - **Pola penyewaan sepanjang hari**
+     - Menggunakan diagram garis untuk menggambarkan tren penyewaan sepanjang hari.
+     - Mengidentifikasi jam-jam puncak penyewaan sepeda.
 
-5. 📊 Analisis Lanjutan 
-   Menganalisis data menggunakan metode RFM Analysis dan Clustering menampilkan segmentasi pelanggan berdasarkan jumlah penyewaan.
-
- 🎯 Fitur Utama
-- Filter Data Berdasarkan Tanggal: Memilih rentang tanggal untuk menyesuaikan analisis.
-- isualisasi Data: Menggunakan berbagai grafik interaktif untuk menyajikan informasi.
-- *Analisis Statistik: Melakukan analisis terhadap tren penyewaan dan pengaruh cuaca.
-- Download Dataset: Pengguna dapat mengunduh file `day.csv` dan `hour.csv` langsung dari sidebar.
-
- 🔍 Informasi Tambahan
-RFM Analysis pada halaman *Analisis Lanjutan* membagi pelanggan ke dalam kategori berdasarkan jumlah penyewaan:
-- Low Usage (<500 penyewaan)
-- Regular User (500-1500 penyewaan)
-- High Usage (>1500 penyewaan)
+## ✨ Kontribusi
+Jika Anda ingin berkontribusi atau mengembangkan dashboard ini lebih lanjut, silakan fork repositori ini dan ajukan pull request.
