@@ -4,6 +4,8 @@ import numpy as np
 from PIL import Image
 import plotly.express as px
 import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 
 img = Image.open('Dashboard/sepeda-gunung.jpg')
