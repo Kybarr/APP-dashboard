@@ -40,11 +40,46 @@ col1.metric("📦 Total Penyewa", f"{total_penyewa:,}")
 
 if halaman == "📅 Analisis Harian":
     st.subheader("📅 Analisis Penyewaan Sepeda Harian")
-    st.markdown("""
-    Berikut adalah data penyewaan sepeda per hari.
-    Data ini mencakup jumlah sepeda yang disewa dalam berbagai kondisi cuaca dan faktor lainnya.
-    """)
-    st.dataframe(day_df)
+
+    # Pastikan kolom tanggal dalam format datetime
+    day_df["dteday"] = pd.to_datetime(day_df["dteday"])
+
+    # Menambahkan Filter Tanggal dengan Date Input
+    col1, col2 = st.columns(2)
+    min_date = day_df["dteday"].min().date()
+    max_date = day_df["dteday"].max().date()
+
+    with col1:
+        start_date = st.date_input("Pilih Tanggal Mulai", min_value=min_date, max_value=max_date, value=min_date)
+    with col2:
+        end_date = st.date_input("Pilih Tanggal Akhir", min_value=min_date, max_value=max_date, value=max_date)
+
+    # Menambahkan Filter Musim
+    season_mapping = {1: "Spring", 2: "Summer", 3: "Fall", 4: "Winter"}
+    day_df["season_label"] = day_df["season"].map(season_mapping)
+
+    selected_season = st.selectbox("Pilih Musim:", ["Semua"] + list(season_mapping.values()))
+
+    # Filter dataset berdasarkan pilihan pengguna
+    filtered_df = day_df[
+        (day_df["dteday"].dt.date >= start_date) & 
+        (day_df["dteday"].dt.date <= end_date)
+    ]
+
+    if selected_season != "Semua":
+        filtered_df = filtered_df[filtered_df["season_label"] == selected_season]
+
+    # Menampilkan Data yang Telah Difilter
+    st.dataframe(filtered_df)
+
+    # Visualisasi Penyewaan Sepeda dengan Plotly
+    st.markdown("### 📈 Tren Penyewaan Sepeda Berdasarkan Filter")
+    fig = px.line(filtered_df, x="dteday", y="cnt", color="season_label",
+                  labels={"cnt": "Jumlah Penyewaan", "dteday": "Tanggal"},
+                  title="Tren Penyewaan Sepeda Berdasarkan Musim & Tanggal")
+
+    st.plotly_chart(fig, use_container_width=True)
+
 
 elif halaman == "⏰ Analisis Jam":
     st.subheader("⏰ Distribusi Penyewaan Sepeda Per Jam")
