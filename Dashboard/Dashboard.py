@@ -31,6 +31,8 @@ st.markdown("""
     - **Pertanyaan Analisis:** Menjawab pertanyaan penting terkait pola penyewaan.
     
     **Pilih menu di navigasi sidebar untuk melihat lebih banyak informasi!** 🚴‍♂️
+
+    Dashboard keren
 """)
 
 # Menampilkan Statistik Utama
